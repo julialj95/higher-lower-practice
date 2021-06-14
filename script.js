@@ -1,55 +1,51 @@
-// let maxNumber = prompt("Select a maximum number for the guessing game.");
-
-// let randomNum = Math.floor(Math.random() * getMax(Math.round(maxNumber))) + 1;
-// console.log(randomNum);
 let maxNumber;
 let roundedMax;
 let tries = [];
+let randomNum;
 
 function getMax() {
   maxNumber = prompt("Select a maximum number for the guessing game.");
-
   while (maxNumber <= 0 || isNaN(maxNumber)) {
-    console.log("in while clause");
-    maxNumber = prompt(
-      "Try again. Please enter a positive number to be the maximum in the guessing game."
-    );
+    if (maxNumber <= 0) {
+      maxNumber = prompt(
+        "Try again. Please enter a positive number to be the maximum in the guessing game."
+      );
+    } else if (isNaN(maxNumber)) {
+      maxNumber = prompt(
+        "Invalid data type. Please enter a number to be the maximum in the guessing game."
+      );
+    }
   }
-  // if (maxNumber <= 0) {
-  //   maxNumber = prompt(
-  //     "Please enter a positive number to be the maximum in the guessing game."
-  //   );
-  // } else if (isNaN(maxNumber)) {
-  //   maxNumber = prompt(
-  //     "Invalid data type. Please enter a number to be the maximum in the guessing game."
-  //   );
-  console.log(maxNumber);
-  console.log(isNaN(maxNumber));
-  displayMax(maxNumber);
+  roundedMax = Math.round(maxNumber);
+  displayMax(roundedMax);
+  getRandomNum(roundedMax);
 }
 
-function displayMax(maxNumber) {
-  roundedMax = Math.round(maxNumber);
+function displayMax(roundedMax) {
   document.getElementById(
     "title"
   ).innerHTML = `Guess a number between 1 and ${roundedMax}`;
-  return roundedMax;
+  return;
+}
+
+function getRandomNum(roundedMax) {
+  randomNum = Math.floor(Math.random() * roundedMax) + 1;
 }
 
 function guess() {
-  console.log("calling guess function");
-  let randomNum =
-    Math.floor(Math.random() * getMax(Math.round(roundedMax))) + 1;
-  console.log("randomNum", randomNum);
-
   let guess = document.getElementById("guess").value;
   let result = document.getElementById("result");
 
-  findDuplicate(guess);
+  let duplicate = tries.find((number) => number === guess);
+
+  if (duplicate !== undefined) {
+    result.innerHTML = `You already guessed ${guess}!`;
+    return;
+  }
 
   if (isNaN(guess)) {
     result.innerHTML = "That is not a number!";
-  } else if (guess > getMax(maxNumber) || guess < 1) {
+  } else if (guess > roundedMax || guess < 1) {
     result.innerHTML = "That number is out of range.";
   } else if (randomNum == guess) {
     tries.push(guess);
@@ -65,18 +61,7 @@ function guess() {
   }
 }
 
-function findDuplicate(guess) {
-  console.log("calling findDuplicate");
-  let duplicate = tries.find((number) => number === guess);
-
-  if (duplicate !== undefined) {
-    result.innerHTML = `You already guessed ${guess}!`;
-    return;
-  }
-}
-
 function displayGuesses(tries) {
-  console.log("callingDisplayGuesses");
   return tries.join(", ") + ".";
 }
 
